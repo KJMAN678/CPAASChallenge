@@ -16,18 +16,15 @@ class SMSViewTest(TestCase):
         self.assertContains(response, 'phone_number')
         self.assertContains(response, 'message')
 
-    @patch('communication.views.SmsApi')
-    @patch('communication.views.ApiClient')
-    @patch('communication.views.Configuration')
-    def test_valid_sms_submission(self, mock_config, mock_client, mock_sms_api):
+    @patch('communication.views.Client')
+    def test_valid_sms_submission(self, mock_client):
         """有効なSMS送信のテスト"""
-        mock_response = MagicMock()
-        mock_response.messages = [MagicMock()]
-        mock_response.messages[0].status.group_name = "PENDING"
+        mock_message = MagicMock()
+        mock_message.sid = 'test_sms_sid'
         
-        mock_api_instance = MagicMock()
-        mock_api_instance.send_sms_message.return_value = mock_response
-        mock_sms_api.return_value = mock_api_instance
+        mock_client_instance = MagicMock()
+        mock_client_instance.messages.create.return_value = mock_message
+        mock_client.return_value = mock_client_instance
 
         form_data = {
             'phone_number': '+81901234567',
@@ -64,26 +61,19 @@ class VoiceCallViewTest(TestCase):
         self.assertContains(response, 'message')
         self.assertContains(response, 'voice_type')
 
-    @patch('communication.views.CallsApi')
-    @patch('communication.views.ApiClient')
-    @patch('communication.views.Configuration')
-    @patch('communication.views.PollyService')
-    def test_valid_voice_call_submission(self, mock_polly, mock_config, mock_client, mock_calls_api):
+    @patch('communication.views.VoiceResponse')
+    @patch('communication.views.Client')
+    def test_valid_voice_call_submission(self, mock_client, mock_voice_response):
         """有効な音声通話のテスト"""
-        mock_polly_instance = MagicMock()
-        mock_polly_instance.synthesize_speech.return_value = b'fake_audio_data'
-        mock_polly_instance.save_audio_file.return_value = '/tmp/fake_audio.mp3'
-        mock_polly.return_value = mock_polly_instance
-
-        mock_call_response = MagicMock()
-        mock_call_response.call_id = 'test_call_id'
+        mock_twiml = MagicMock()
+        mock_voice_response.return_value = mock_twiml
         
-        mock_say_response = MagicMock()
+        mock_call = MagicMock()
+        mock_call.sid = 'test_call_sid'
         
-        mock_api_instance = MagicMock()
-        mock_api_instance.create_call.return_value = mock_call_response
-        mock_api_instance.say_text.return_value = mock_say_response
-        mock_calls_api.return_value = mock_api_instance
+        mock_client_instance = MagicMock()
+        mock_client_instance.calls.create.return_value = mock_call
+        mock_client.return_value = mock_client_instance
 
         form_data = {
             'phone_number': '+81901234567',
@@ -95,11 +85,12 @@ class VoiceCallViewTest(TestCase):
         self.assertEqual(response.status_code, 302)  # リダイレクト
         self.assertRedirects(response, reverse('communication:voice_success'))
 
-        mock_polly_instance.synthesize_speech.assert_called_once_with(
-            'こんにちは、テストメッセージです。', 'Mizuki'
+        mock_twiml.say.assert_called_once_with(
+            'こんにちは、テストメッセージです。',
+            voice='Polly.Mizuki-Neural',
+            language='ja-JP'
         )
-        mock_polly_instance.save_audio_file.assert_called_once()
-        mock_polly_instance.cleanup_audio_file.assert_called_once()
+        mock_client_instance.calls.create.assert_called_once()
 
     def test_invalid_voice_call_submission(self):
         """無効な音声通話のテスト"""
