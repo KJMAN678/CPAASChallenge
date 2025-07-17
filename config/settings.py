@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "communication",
 ]
 
 MIDDLEWARE = [
@@ -125,3 +126,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+INFOBIP_BASE_URL = os.environ.get("INFOBIP_BASE_URL")
+INFOBIP_API_KEY = os.environ.get("INFOBIP_API_KEY")
+INFOBIP_API_PREFIX = os.environ.get("INFOBIP_API_PREFIX")
+INFOBIP_FROM_NUMBER = os.environ.get("INFOBIP_FROM_NUMBER")
+
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.environ.get("AWS_REGION", "ap-northeast-1")
+AWS_S3_BUCKET = os.environ.get("AWS_S3_BUCKET")

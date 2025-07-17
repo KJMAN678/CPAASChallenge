@@ -7,6 +7,8 @@ requires-python = ">=3.12"
 dependencies = [
     "Django==5.2.4",
     "psycopg2-binary==2.9.10",
+    "infobip-api-python-client==5.1.1",
+    "boto3==1.35.0",
 ]
 
 [tool.uv]
