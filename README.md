@@ -20,6 +20,17 @@ export POSTGRES_DB=hogehoge
 export POSTGRES_USER=hogehoge
 export POSTGRES_PASSWORD=hogehoge
 
+# SMS送信・音声通話機能用の環境変数
+export INFOBIP_API_KEY=your_infobip_api_key
+export INFOBIP_API_PREFIX=App
+export INFOBIP_BASE_URL=https://api.infobip.com
+export INFOBIP_FROM_NUMBER=your_infobip_phone_number
+
+# AWS Polly音声合成用の環境変数
+export AWS_ACCESS_KEY_ID=your_aws_access_key_id
+export AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+export AWS_DEFAULT_REGION=ap-northeast-1
+
 # 環境変数を読み込む
 $ direnv allow
 ```
@@ -52,6 +63,15 @@ $ docker compose run --rm backend uv run pytest
 ```sh
 $ http://localhost:8000/ がアプリケーションのURL
 ```
+
+#### SMS送信・音声通話機能の利用
+
+SMS送信機能と音声通話機能を利用するには、以下のURLにアクセスしてください：
+
+- SMS送信フォーム: http://localhost:8000/communication/sms/
+- 音声通話フォーム: http://localhost:8000/communication/voice/
+
+**注意**: 実際にSMSや音声通話を行うには、上記の環境変数にInfobip APIキーとAWS認証情報を設定する必要があります。
 
 #### 8.Additional Notes
 - 必ず日本語で回答してください
